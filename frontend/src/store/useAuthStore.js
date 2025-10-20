@@ -3,7 +3,16 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
+// derive backend origin from VITE_API_URL (fall back to localhost in dev or your backend link)
+// strip any trailing /api or trailing slash so socket connects to origin
+const API_ORIGIN = (
+    import.meta.env.VITE_API_URL ??
+    (import.meta.env.MODE === "development" ? "http://localhost:3000" : "https://chat-backend-3-m788.onrender.com")
+)
+    .replace(/\/api\/?$/, "")
+    .replace(/\/$/, "");
+
+const BASE_URL = API_ORIGIN;
 
 export const useAuthStore = create((set, get) => ({
     authUser: null,
